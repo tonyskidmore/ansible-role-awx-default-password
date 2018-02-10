@@ -14,7 +14,7 @@
   register: awx_new_password_job_list
   ignore_errors: yes
 
-- name: wait for AWX to come up on intial deployment
+- name: "wait for AWX to come up on {{ awx_host }} after intial deployment"
   tower_job_list:
     tower_username: "{{ awx_username }}"
     tower_password: "{{ awx_default_password }}"
