@@ -1,0 +1,43 @@
+---
+
+- name: install ansible-tower-cli
+  pip:
+    name: ansible-tower-cli
+  become: "{{ awx_pip_become }}"
+
+- name: get tower job list
+  tower_job_list:
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_new_password }}"
+    tower_verify_ssl: "{{ awx_verify_ssl }}"
+    tower_host: "{{ awx_host }}"
+  register: awx_new_password_job_list
+  ignore_errors: yes
+
+- name: wait for AWX to come up on intial deployment
+  tower_job_list:
+    tower_username: "{{ awx_username }}"
+    tower_password: "{{ awx_default_password }}"
+    tower_verify_ssl: "{{ awx_verify_ssl }}"
+    tower_host: "{{ awx_host }}"
+  register: awx_job_list
+  until: not awx_job_list | failed
+  retries: "{{ awx_startup_retries }}"
+  delay: "{{ awx_startup_delay }}"
+  ignore_errors: yes
+  when: awx_new_password_job_list | failed
+
+- name: change admin password using tower-cli
+  shell: >
+        tower-cli user modify -h {{ awx_host }} 
+        -u {{  awx_username }} 
+        -p {{ awx_default_password }} 
+        --username {{  awx_username }} 
+        --password {{ awx_new_password }} 
+        --email admin@domain.local 
+        --first-name admin 
+        --last-name user 
+        --is-superuser true
+  no_log: yes
+  register: awx_change_admin_password
+  when: awx_new_password_job_list | failed

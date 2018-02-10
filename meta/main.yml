@@ -1,0 +1,10 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: tonyskidmore
+  description: "sets the default admin password following a deployment"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
