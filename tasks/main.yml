@@ -5,6 +5,13 @@
     name: ansible-tower-cli
   become: "{{ awx_pip_become }}"
 
+- name:  debug passwords
+  debug:
+    var: item
+  with_items:
+    - "{{ awx_default_password }}"
+    - "{{ awx_new_password }}"
+
 - name: get tower job list
   tower_job_list:
     tower_username: "{{ awx_username }}"
