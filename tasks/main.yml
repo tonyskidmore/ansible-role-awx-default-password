@@ -5,12 +5,8 @@
     name: ansible-tower-cli
   become: "{{ awx_pip_become }}"
 
-- name:  debug passwords
-  debug:
-    var: item
-  with_items:
-    - "{{ awx_default_password }}"
-    - "{{ awx_new_password }}"
+- name: set tower-cli config to avoid errors
+  shell: 'tower-cli config verify_ssl false'
 
 - name: get tower job list
   tower_job_list:
@@ -28,10 +24,9 @@
     tower_verify_ssl: "{{ awx_verify_ssl }}"
     tower_host: "{{ awx_host }}"
   register: awx_job_list
-  until: not awx_job_list | failed
+  until: awx_job_list | success
   retries: "{{ awx_startup_retries }}"
   delay: "{{ awx_startup_delay }}"
-  ignore_errors: yes
   when: awx_new_password_job_list | failed
 
 - name: change admin password using tower-cli
