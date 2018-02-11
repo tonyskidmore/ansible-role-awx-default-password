@@ -1,7 +1,7 @@
 ---
 awx_username: admin
 awx_default_password: password
-awx_new_password: D0n'tPutH3r3
+awx_new_password: D0ntPutH3r3
 awx_verify_ssl: no
 awx_host: http://localhost
 awx_startup_delay: 15
